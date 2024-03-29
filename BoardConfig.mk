@@ -24,7 +24,7 @@ USES_DEVICE_XIAOMI_MI8937 := true
 
 # Asserts
 TARGET_BOARD_INFO_FILE := $(DEVICE_PATH)/board-info.txt
-TARGET_OTA_ASSERT_DEVICE := mi8937,land,santoni,prada,ulysse,ugglite,ugg,rolex,riva,Mi8937,Mi8937_4_19
+TARGET_OTA_ASSERT_DEVICE := mi8937,land,santoni,prada,ulysse,ugglite,ugg,rolex,riva,Mi8937,Mi8937_4_19,Mi8937_Car
 
 # Camera
 #MI8937_CAM_USE_LATEST_CAMERA_STACK := true
@@ -33,7 +33,11 @@ TARGET_SUPPORT_HAL1 := false
 endif
 
 # Display
+ifeq ($(TARGET_IS_AUTOMOTIVE),true)
+TARGET_SCREEN_DENSITY := 160
+else
 TARGET_SCREEN_DENSITY := 280
+endif
 
 # Fastboot
 TARGET_BOARD_FASTBOOT_INFO_FILE := $(DEVICE_PATH)/fastboot-info.txt
@@ -45,8 +49,14 @@ TARGET_FS_CONFIG_GEN += $(DEVICE_PATH)/config.fs
 DEVICE_MANIFEST_FILE += $(DEVICE_PATH)/manifest.xml
 
 # Init
+ifeq ($(TARGET_IS_AUTOMOTIVE),true)
+# FIXME: Do not set density for Car product
+TARGET_INIT_VENDOR_LIB := //$(COMMON_PATH):init_xiaomi_mithorium
+TARGET_RECOVERY_DEVICE_MODULES := init_xiaomi_mithorium
+else
 TARGET_INIT_VENDOR_LIB := //$(DEVICE_PATH):init_xiaomi_mi8937
 TARGET_RECOVERY_DEVICE_MODULES := init_xiaomi_mi8937
+endif
 
 # Kernel
 BOARD_KERNEL_CMDLINE += androidboot.boot_devices=soc/7824900.sdhci
@@ -76,6 +86,10 @@ ifeq ($(TARGET_KERNEL_VERSION),4.19)
 BOARD_VENDOR_KERNEL_MODULES += $(wildcard device/xiaomi/kernel-mithorium/Mi8937_4_19/*.ko)
 else
 BOARD_VENDOR_KERNEL_MODULES += $(wildcard device/xiaomi/kernel-mithorium/Mi8937/*.ko)
+endif
+
+ifeq ($(TARGET_IS_AUTOMOTIVE),true)
+$(call soong_config_set,MITHORIUM_KERNEL,DEVICE,Mi8937_4_19)
 endif
 
 # Partitions
@@ -109,8 +123,10 @@ $(foreach p, $(call to-upper, $(SSI_PARTITIONS)), \
 $(foreach p, $(call to-upper, $(TREBLE_PARTITIONS)), \
     $(eval BOARD_$(p)IMAGE_PARTITION_RESERVED_SIZE := 41943040)) # 40 MB
 
+ifneq ($(TARGET_IS_AUTOMOTIVE),true)
 ifneq ($(WITH_GMS),true)
 BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE := 838860800 # 800 MB
+endif
 endif
 
 # Power
