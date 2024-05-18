@@ -126,6 +126,11 @@ PRODUCT_SOONG_NAMESPACES += \
 # Touch HAL
 PRODUCT_PACKAGES += \
     vendor.lineage.touch@1.0-service.xiaomi_mi8937
+    
+# FM
+PRODUCT_PACKAGES += \
+    RevampedFMRadio \
+    libqcomfmjni:64
 
 # Wifi
 PRODUCT_PACKAGES += \
