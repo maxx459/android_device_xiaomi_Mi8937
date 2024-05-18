@@ -12,6 +12,16 @@ $(call inherit-product, $(SRC_TARGET_DIR)/product/product_launched_with_n_mr1.mk
 # Inherit some common LineageOS stuff.
 $(call inherit-product, vendor/lineage/config/common_full_phone.mk)
 
+# RisingOS flags
+RISING_CHIPSET="MSM8937"
+RISING_MAINTAINER="@maxx459"
+TARGET_ENABLE_BLUR := false
+PRODUCT_NO_CAMERA := false
+WITH_GMS := false
+PRODUCT_BUILD_PROP_OVERRIDES += \
+    RISING_CHIPSET="MSM8937" \
+    RISING_MAINTAINER="@maxx459"
+
 # Kernel
 TARGET_KERNEL_VERSION := 4.19
 
